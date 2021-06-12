@@ -7,6 +7,45 @@ def main():
     df = load_data_frame()
     df = translate_data(df)
 
+def stagin_code():
+    X = df[["City", "Civil status"]]
+
+    conditions = [
+        (X["City"] == "Big city"),
+        (X["City"] == "Suburb"),
+        (X["City"] == "Country")]
+    choices = [1, 2, 3]
+    X["City_2"] = np.select(conditions, choices)
+
+    conditions_1 = [
+        (X["Civil status"] == "Single"),
+        (X["Civil status"] == "In relationship"),
+        (X["Civil status"] == "Dont know")]
+    choices_1 = [1, 2, 3]
+    X["Civil status 2"] = np.select(conditions_1, choices_1)
+    X = X.drop(columns=["City", "Civil status"])
+
+    ## CIVIL STATUS
+    # 1 = single
+    # 2 = In relationship
+    # 3 = Dont know
+
+    ## City
+    # 1 = Big City
+    # 2 = Suburb
+    # 3 = Country
+
+    y = df["Age"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+
+    model = DecisionTreeClassifier()
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+
+    score = accuracy_score(y_test, predictions)
+    score
+
 def load_data_frame():
 
     with open("transport.csv", "r", newline="") as fp:
